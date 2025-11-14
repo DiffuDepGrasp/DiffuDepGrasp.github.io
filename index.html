@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- SEO Meta Tags -->
+  <title>DiffuDepGrasp: Diffusion-based Depth Noise Modeling Empowers
+    Sim2Real Robotic Grasping</title>
+  <meta name="description" content="Project page for DiffuDepGrasp, a zero-shot Sim2Real framework for robotic grasping that learns to simulate realistic depth sensor noise using diffusion models.">
+  <meta name="keywords" content="Sim2Real, Robotic Grasping, Diffusion Models, Depth Perception, Imitation Learning, Embodied AI">
+  
+  <!-- ... (Other meta tags like Open Graph, Twitter, etc. can be filled later) ... -->
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <link rel="icon" type="image/png" href="static/images/robot-arm.jpg" sizes="32x32">
+</head>
+
+<body>
+
+  <!-- Scroll to Top Button (optional) -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">DiffuDepGrasp: Diffusion-based Depth Noise Modeling Empowers
+              Sim2Real Robotic Grasping</h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                  <a href="#" target="_blank">Yingting Zhou</a><sup>1,2,3</sup>,</span>
+                <span class="author-block">
+                  <a href="https://cwb0106.github.io/" target="_blank">Wenbo Cui</a><sup>1,2</sup>,</span>
+                <span class="author-block">
+                  <a href="#" target="_blank">Weiheng Liu</a><sup>1,2</sup>,</span>
+                <span class="author-block">
+                  <a href="#" target="_blank">Guixing Chen</a><sup>3</sup>,</span>
+                <span class="author-block">
+                  <a href="https://ia.cas.cn/rcdw/fyjy/202404/t20240422_7129926.html" target="_blank">Haoran Li</a><sup>1,2,3</sup>,</span>
+                <span class="author-block">
+                  <a href="https://ia.cas.cn/rcdw/yjy/202404/t20240422_7129930.html" target="_blank">Dongbin Zhao</a><sup>1,2</sup>.
+                </span>
+              </div>
+              <div class="is-size-6 publication-authors">
+                <span class="author-block"><sup>1</sup>The State Key Laboratory of Multimodal Artificial Intelligence Systems, Institute of Automation, Chinese Academy of Sciences, Beijing, China</span><br>
+                <span class="author-block"><sup>2</sup>School of Artificial Intelligence, University of Chinese Academy of Sciences, Beijing, China</span><br>
+                <span class="author-block"><sup>3</sup>Beijing Zhiwangweilai Technology Co., Ltd., Beijing, China</span>
+                <br>
+              </div>
+
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/YOUR_ARXIV_ID.pdf" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://github.com/YOUR_REPO_HERE" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (Coming Soon)</span>
+                </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Accurate spatial-geometric perception is crucial for robotic grasping. However, transferring depth-based policies from simulation to reality is severely hampered by a "Perception Gap" between pristine simulated geometry and real sensor data laden with physical artifacts. While existing strategies attempt to bridge this gap, they often compromise on realism, generality, or deployment efficiency. To address this, we introduce DiffuDepGrasp, a deployment-efficient Sim2Real framework that enables zero-shot transfer. The core of our framework is the Diffusion Depth Generator, a novel module that augments pristine simulated depth with realistic, learned sensor noise. To achieve this, it first leverages a foundational video depth model to extract temporally-consistent geometric priors, enabling data-efficient training. Subsequently, a "Noise Grafting" technique is employed to inject these learned artifacts while preserving perfect metric accuracy. Extensive real-world experiments validate our framework's superior performance. Our policy, trained solely on the generated data, achieves a 95.7% average success rate (SOTA) on a 12-object grasping task via zero-shot transfer, demonstrating strong generalization to unseen objects.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Method Section -->
+  <section class="section">
+    <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+            <div class="column is-full-width">
+                <h2 class="title is-3">Method</h2>
+                <h3 class="title is-4">Framework Overview</h3>
+                <img src="static/images/0-framework.png" alt="Overview of the DiffuDepGrasp framework" loading="lazy"/>
+                <div class="content has-text-justified">
+                    <p>
+                        DiffuDepGrasp(DDG) is structured into four key stages. <b>(A) Teacher Policy Training:</b> An RL-based teacher policy is trained in simulation with privileged state information to generate expert demonstrations. <b>(B) Diffusion Depth Generator:</b> This core module learns to simulate realistic sensor noise. It consists of a Diffusion Depth Module that learns noise patterns from real data, and a Noise Grafting Module that injects these patterns into perfect simulation geometry. <b>(C) Student Policy Distillation:</b> The teacher's knowledge is distilled into a vision-based student policy using our generated high-fidelity depth data. <b>(D) Sim2Real Deployment:</b> The final student policy is deployed zero-shot on the physical robot.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Experiments Section -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Experiments</h2>
+      
+      <!-- Baselines Comparison -->
+      <h3 class="title is-4 has-text-centered">Baselines Comparison</h3>
+      <div class="has-text-centered">
+        <img src="static/images/1-baselines.png" alt="Comparison of visual representations for different baselines" loading="lazy" style="width: 80%; margin: auto;"/>
+      </div>
+      <div class="content has-text-justified">
+        <p>
+          (a) Simulated RGB and (f) Real-world RGB.
+          (b) Clean ground-truth (GT) depth from simulation.
+          (g) Raw, noisy depth from the real sensor.
+          The inputs of baselines include:
+          (c) GT depth with procedural random noise (Rand Noise),
+          (h) inpainted real depth (Inpaint),
+          and (d), (i) depth estimated by DAv2 from simulated and real RGBs.
+          For comparison, (e) and (j) show the final, high-fidelity depth maps generated by our proposed DDG algorithm from the simulation and real-world data, respectively.
+          </p>
+      </div>
+      <hr>
+
+      <!-- Qualitative Results -->
+      <h3 class="title is-4 has-text-centered">Qualitative Analysis of Our Generator</h3>
+      <div class="has-text-centered">
+        <img src="static/images/2-results.png" alt="Qualitative results of our data generation pipeline" loading="lazy" style="width: 80%; margin: auto;"/>
+      </div>
+      <div class="content has-text-justified">
+        <p>
+          From top to bottom, the rows: 
+          (1) the original simulated RGB image; 
+          (2) the corresponding pristine, clean depth in simulation; 
+          (3) the generated depth maps of Diffusion Depth Module without Noise Grafting Module (DDG w/o G); 
+          and (4) the generated depth maps of Diffusion Depth Module with Noise Grafting Module (DDG).
+        </p>
+      </div>
+      <hr>
+
+      <!-- t-SNE Analysis -->
+      <h3 class="title is-4 has-text-centered">t-SNE Feature Space Analysis</h3>
+      <div class="has-text-centered">
+        <img src="static/images/3-t-sne.png" alt="t-SNE visualization of feature space alignment" loading="lazy" style="width: 80%; margin: auto;"/>
+      </div>
+      <div class="content has-text-justified">
+        <p>
+          The t-SNE visualization shows the feature space alignment between simulated (orange) and real (blue) data. While baselines like Sim GT (a) and DAv2 (d) show clear separation, our methods (e, f) achieve significant overlap, indicating a much smaller domain gap at the feature level.
+        </p>
+      </div>
+      <hr>
+
+      <!-- Quantitative Comparison Table -->
+
+      <!-- Analysis -->
+      <h4 class="title is-5 has-text-centered">TABLE I: Quantitative Comparison of Sim-to-Real Data Generation Methods</h4>
+      <div class="content has-text-justified">
+        <p>
+          The table quantifies the distributional distance between various simulated data generation methods and real-world sensor data. Our approach yields the lowest distance scores, signifying a closer statistical alignment and thus the highest degree of perceptual realism.
+        </p>
+      </div>
+      <div class="has-text-centered">
+        <img src="static/images/quality_result.jpg" alt="t-SNE visualization of feature space alignment" loading="lazy" style="width: 60%; margin: auto;"/>
+      </div>
+      <hr>
+
+      <!-- Analysis -->
+      <h4 class="title is-5 has-text-centered">TABLE II: End-to-End Sim-to-Real Grasping Performance on Seen and Unseen Objects</h4>
+      <div class="content has-text-justified">
+        <p>
+          The table reports the end-to-end grasping success rates of our method against several baselines. Our full approach outperforms all competitors on both seen and novel (unseen) objects, underscoring its superior generalization and robust zero-shot transfer capability.
+        </p>
+      </div>
+      <div class="has-text-centered">
+        <img src="static/images/real_world_results.jpg" alt="t-SNE visualization of feature space alignment" loading="lazy" style="width: 100%; margin: auto;"/>
+      </div>
+      <hr>
+
+
+      <!-- Video Results -->
+
+      <h3 class="title is-4 has-text-centered" id="video-results">Video Results</h3>
+
+      <h4 class="title is-5 has-text-centered" style="margin-top: 2rem;">Simulation Results</h4>
+
+      <div class="columns is-centered">
+        <div class="column is-narrow">
+          <div class="field has-addons">
+            <div class="control">
+              <a class="button is-static">
+                Scene Selection:
+              </a>
+            </div>
+            <div class="control">
+              <div class="select">
+                <select id="result-selector" onchange="switchVideo()">
+                  <option value="test" selected>Test Scenario</option>
+                  <option value="train">Train Scenario</option>
+
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+
+          <div id="test-section" class="content has-text-centered">
+            <video id="video-test" autoplay controls muted loop playsinline preload="metadata" style="width: 100%; border-radius: 8px;">
+              <source src="static/videos/sim/sim_grasp2.mp4" type="video/mp4">
+            </video>
+          </div>
+          
+          <div id="train-section" class="content has-text-centered" style="display: none;">
+            <video id="video-train" autoplay controls muted loop playsinline preload="metadata" style="width: 100%; border-radius: 8px;">
+              <source src="static/videos/sim/sim_grasp.mp4" type="video/mp4">
+            </video>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <script>
+        // 1. 定义切换视频的逻辑
+        function switchVideo() {
+          var selector = document.getElementById("result-selector");
+          var selectedValue = selector.value;
+          
+          var trainSection = document.getElementById("train-section");
+          var testSection = document.getElementById("test-section");
+          
+          var trainVideo = document.getElementById("video-train");
+          var testVideo = document.getElementById("video-test");
+
+          if (selectedValue === "train") {
+            // 显示 Train
+            trainSection.style.display = "block";
+            testSection.style.display = "none";
+            
+            // 逻辑：Train 播放，Test 暂停
+            trainVideo.play();
+            testVideo.pause();
+          } else {
+            // 显示 Test
+            trainSection.style.display = "none";
+            testSection.style.display = "block";
+            
+            // 逻辑：Test 播放，Train 暂停
+            testVideo.play();
+            trainVideo.pause();
+          }
+        }
+
+        // 2. 实现“滑到此处自动播放” (Intersection Observer)
+        document.addEventListener('DOMContentLoaded', () => {
+          const videos = [document.getElementById('video-train'), document.getElementById('video-test')];
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              // 如果视频进入视口，并且它是当前显示的那个视频
+              if (entry.isIntersecting) {
+                // 只有当视频父容器可见时才播放，避免后台播放隐藏的视频
+                if (entry.target.offsetParent !== null) {
+                  entry.target.play();
+                }
+              } else {
+                // 离开视口时暂停，节省资源
+                entry.target.pause();
+              }
+            });
+          }, { threshold: 0.5 }); // threshold: 0.5 表示视频显示一半时触发
+
+          videos.forEach(video => {
+            if(video) observer.observe(video);
+          });
+        });
+      </script>
+
+      </div>
+
+        
+        <h4 class="title is-5 has-text-centered" style="margin-top: 2rem;">Comparison With Baselines</h4>
+        <div class="columns is-centered is-multiline"> 
+          
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              <h5 class="title is-6">[Ours: DiffuDepGrasp]</h5>
+              <video controls muted loop autoplay preload="metadata" style="width:  100%; border-radius: 8px;">
+                <source src="static/videos/sim/0-apple_ours.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              <h5 class="title is-6">[Baseline 1: GT]</h5>
+              <video controls muted loop autoplay preload="metadata" style="width:  100%; border-radius: 8px;">
+                <source src="static/videos/sim/1-real_gt.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              <h5 class="title is-6">[Baseline 2: Rand Noise]</h5>
+              <video controls muted loop autoplay preload="metadata" style="width:   100%; border-radius: 8px;">
+                <source src="static/videos/sim/2-real_rand_noise.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              <h5 class="title is-6">[Baseline 3: Inpaint]</h5>
+              <video controls muted loop autoplay preload="metadata" style="width:   100%; border-radius: 8px;">
+                <source src="static/videos/sim/3-inpaint.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              <h5 class="title is-6">[Baseline 4: Inpaint]</h5>
+              <video controls muted loop autoplay preload="metadata" style="width:   100%; border-radius: 8px;">
+                <source src="static/videos/sim/4-dav2.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <div class="column is-one-third">           
+            <div class="content has-text-centered">
+              
+              <div class="field has-addons is-justify-content-center" style="margin-bottom: 0.5rem; justify-content: center;">
+                  <div class="control">
+                      <a class="button is-static is-small">Ablation:</a>
+                  </div>
+                  <div class="control">
+                      <div class="select is-small">
+                          <select id="ablation-selector" onchange="switchAblationVideo()">
+                              <option value="wograsp" selected>[w/o Grasp]</option>
+                              <option value="ours">[Full Ours]</option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+              
+              <div id="video-wograsp-container">
+                <video controls muted loop autoplay preload="metadata" style="width: 100%; border-radius: 8px;">
+                  <source src="static/videos/sim/5-wograsp.mp4" type="video/mp4">
+                </video>
+              </div>
+
+              <div id="video-ours-container" style="display: none;">
+                <video controls muted loop autoplay preload="metadata" style="width: 100%; border-radius: 8px;">
+                  <source src="static/videos/sim/5-ours-full.mp4" type="video/mp4">
+                </video>
+              </div>
+              
+            </div>
+          </div>
+          
+        </div>    
+
+        <script>
+          function switchAblationVideo() {
+            // 1. 获取当前选中的值
+            const selectedValue = document.getElementById("ablation-selector").value;
+        
+            // 2. 获取两个视频的容器
+            const videoWograsp = document.getElementById("video-wograsp-container");
+            const videoOurs = document.getElementById("video-ours-container");
+            
+            // 3. (可选但推荐) 获取视频元素本身，以便控制播放/暂停
+            const wograspPlayer = videoWograsp.querySelector('video');
+            const oursPlayer = videoOurs.querySelector('video');
+        
+            // 4. 根据值显示/隐藏
+            if (selectedValue === "wograsp") {
+              // 显示 'w/o Grasp' 视频
+              videoWograsp.style.display = "block";
+              wograspPlayer.play(); // 确保播放
+              
+              // 隐藏 'Ours' 视频
+              videoOurs.style.display = "none";
+              oursPlayer.pause(); // 暂停隐藏的视频
+        
+            } else if (selectedValue === "ours") {
+              // 隐藏 'w/o Grasp' 视频
+              videoWograsp.style.display = "none";
+              wograspPlayer.pause(); // 暂停隐藏的视频
+        
+              // 显示 'Ours' 视频
+              videoOurs.style.display = "block";
+              oursPlayer.play(); // 确保播放
+            }
+          }
+        </script>
+
+        <h4 class="title is-4 has-text-centered">More Real World Results</h3>
+          <div class="columns is-centered">
+            <div class="column">
+                <h4 class="title is-5 has-text-centered"></h4>
+                <div class="content has-text-centered">
+                  <video poster="" controls muted loop autoplay preload="metadata" style="width: 75%; border-radius: 8px;">
+                        <!-- TODO: Name your comparison video 'ours_vs_baselines.mp4' -->
+                        <source src="static/videos/sim/more_results_2.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+          </div>
+
+    </div>   
+  </section>
+
+
+    
+
+
+  <!--BibTex citation -->
+  <!-- <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>@inproceedings{YourName2026DiffuDepGrasp,
+  title={DiffuDepGrasp: Diffusion-based Depth Noise Modeling Empowers
+    Sim2Real Robotic Grasping},
+  author={Your Name and Co-author Name and Advisor Name},
+  booktitle={IEEE International Conference on Robotics and Automation (ICRA)},
+  year={2026}
+}</code></pre>
+    </div>
+  </section> -->
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  </main>
+</body>
+</html>
+
